@@ -525,14 +525,15 @@ await viewer.loadCosmetics({
       status.textContent = "Cargando Lunar wings...";
       viewer.playerObject.skin.state.isFlying = false;
       viewer.playerObject.elytra.visible = false;
+  
       await viewer.loadCosmetics({
       wings: {
         texture: "./wings.webp",
         model: "./wings.fbx"
       }
       });
-
-      await viewer.loadCape('https://textures.lunarclientcdn.com/file/aac50724cfb1541a7e67164729f66f63e1cc9605', 'https://textures.lunarclientcdn.com/file/468c277396449b95ec7ec22ae0afad49fc6700b0');
+      await viewer.loadCape('https://textures.lunarclientcdn.com/file/aac50724cfb1541a7e67164729f66f63e1cc9605', 
+      'https://textures.lunarclientcdn.com/file/468c277396449b95ec7ec22ae0afad49fc6700b0');
       status.textContent = "Lunar wings cargadas con loadCosmetics().";
     });
 
