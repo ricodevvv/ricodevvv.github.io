@@ -357,15 +357,16 @@ await viewer.loadCosmetics({
     });
 
     skinviewer.createOrbitControls(viewer);
-    viewer.zoom = 0.82;
+    viewer.zoom = 0.10;
+    viewer.fov = 30;    
 
     /* ─────────────────────────────────────────
        SKIN DE DEMO (generada en canvas)
     ───────────────────────────────────────── */
     function createDemoSkin() {
       const skin = document.createElement("canvas");
-      skin.width = 64;
-      skin.height = 64;
+      skin.width = 200;
+      skin.height = 385;
       const ctx = skin.getContext("2d");
       ctx.imageSmoothingEnabled = false;
       ctx.fillStyle = "#00000000";
@@ -515,27 +516,34 @@ await viewer.loadCosmetics({
 
     document.getElementById("reset").addEventListener("click", startBuiltInWingDemo);
 
-    document.getElementById("load-lunar-wings").addEventListener("click", async () => {
-      const texture = document.getElementById("wing-texture").value.trim();
-      const model   = document.getElementById("wing-model").value.trim();
-      const meta    = document.getElementById("wing-meta").value.trim() || undefined;
+  document.getElementById("load-lunar-wings").addEventListener("click", async () => {
+  try {
+    const molangRuntime = (await viewer.loadMolang([
+      "https://textures.lunarclientcdn.com/file/26a1adf369252c5e00577c05655f1d24569e0020"
+    ]))[0];
 
-   
+    status.textContent = "Cargando Lunar wings...";
+    viewer.playerObject.skin.state.isFlying = false;
+    viewer.playerObject.elytra.visible = false;
 
-      status.textContent = "Cargando Lunar wings...";
-      viewer.playerObject.skin.state.isFlying = false;
-      viewer.playerObject.elytra.visible = false;
-  
-      await viewer.loadCosmetics({
-      wings: {
-        texture: "./wings.webp",
-        model: "./wings.fbx"
-      }
-      });
-      await viewer.loadCape('https://textures.lunarclientcdn.com/file/aac50724cfb1541a7e67164729f66f63e1cc9605', 
-      'https://textures.lunarclientcdn.com/file/468c277396449b95ec7ec22ae0afad49fc6700b0');
-      status.textContent = "Lunar wings cargadas con loadCosmetics().";
-    });
+    await viewer.loadJsonModel(
+      "https://textures.lunarclientcdn.com/file/d5d4ae348c020bb06853a28e63fc7586b91a971c", // textura
+      "https://textures.lunarclientcdn.com/file/72593b9f3e8101dc96a9824259a975da5787c3bd", // modelo
+      "https://textures.lunarclientcdn.com/file/b55a1460cb22cf3d60343691fbc39ac6dd9eea5f", // animaciones
+      undefined,                                                                            // meta/special
+      undefined,                                                                            // extra_data
+      undefined,                                                                            // special_cosmetic_meta
+      [molangRuntime],    
+      "https://textures.lunarclientcdn.com/file/5cc0e53d7ed60ddf5ae8dfb07d3aea6363dac9dc", // animation meta URL
+              
+    );
+
+    status.textContent = "Lunar wings cargadas.";
+  } catch (err) {
+    status.textContent = "❌ Error: " + err.message;
+    console.error(err);
+  }
+});
 
     init().catch(error => {
       console.error(error);
