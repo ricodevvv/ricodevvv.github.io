@@ -627,14 +627,17 @@ await viewer.loadHat(textura, modeloFBX, transformaciones, animMeta);</code>
         viewer.playerObject.elytra.visible = false;
 
         await viewer.loadJsonModel(
-          "https://textures.lunarclientcdn.com/file/d5d4ae348c020bb06853a28e63fc7586b91a971c", // textura
-          "https://textures.lunarclientcdn.com/file/72593b9f3e8101dc96a9824259a975da5787c3bd", // modelo (JSON geometry)
-          "https://textures.lunarclientcdn.com/file/b55a1460cb22cf3d60343691fbc39ac6dd9eea5f", // animaciones
-          undefined,                                                                            // meta/special
+          "https://textures.lunarclientcdn.com/file/189a3e889da20a38eb75fd1a27ed9a725fc05380", // textura
+          "https://textures.lunarclientcdn.com/file/11051b94a8ce080f2041a0331e0cd96b406d6902", // modelo (JSON geometry)
+          "", // animaciones
+          [
+    { type: "translate", value: { player: { x: 0, y: 0.40, z: 0 } } },
+    { type: "rotate",    value: { player: { angle: -180, y: true } } }
+  ],,                                                                            // meta/special
           undefined,                                                                            // extra_data
           undefined,                                                                            // special_cosmetic_meta
           [molangRuntime],
-          "https://textures.lunarclientcdn.com/file/5cc0e53d7ed60ddf5ae8dfb07d3aea6363dac9dc", // animation meta URL
+          "", // animation meta URL
         );
 
         await viewer.loadHat(
