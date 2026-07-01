@@ -597,13 +597,13 @@ await viewer.loadHat(textura, modeloFBX, transformaciones, animMeta);</code>
     ───────────────────────────────────────── */
     async function startBuiltInWingDemo() {
       await viewer.clearLunarCosmetics();
-      viewer.playerObject.skin.state.isFlying = true;
-      viewer.playerObject.elytra.visible = true;
+      viewer.playerObject.skin.state.isFlying = false;
+      viewer.playerObject.elytra.visible = false;
       status.textContent = "Demo incorporada activa: alas animadas sin assets externos.";
     }
 
     async function init() {
-      await viewer.loadSkin(createDemoSkin());
+      await viewer.loadSkin("https://mc-heads.net/skin/ricodevvv");
       await startBuiltInWingDemo();
     }
 
