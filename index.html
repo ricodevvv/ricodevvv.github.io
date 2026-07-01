@@ -632,6 +632,13 @@ await viewer.loadCosmetics({
               
     );
 
+    await viewer.loadHat(
+  "https://textures.lunarclientcdn.com/file/4445db83f6522ba662518061c0b8f0119e3160d9",   // textura (URL, dataURL o HTMLImageElement)
+  "https://textures.lunarclientcdn.com/file/dafa8dc6ad811c89ec2f96d9481062f7d0880bc0",     // modelo (.fbx o .obj)
+  [],                    // transformaciones (array vacío si no hay)
+  "https://textures.lunarclientcdn.com/file/82a11d62b9fe56171956c3ec8e40611fd48895b5"      // opcional: JSON de animación
+);
+
     status.textContent = "Lunar wings cargadas.";
   } catch (err) {
     status.textContent = "❌ Error: " + err.message;
