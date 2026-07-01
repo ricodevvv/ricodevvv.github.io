@@ -645,7 +645,9 @@ await viewer.loadHat(textura, modeloFBX, transformaciones, animMeta);</code>
         await viewer.loadHat(
           "https://textures.lunarclientcdn.com/file/4445db83f6522ba662518061c0b8f0119e3160d9", // textura (URL, dataURL o HTMLImageElement)
           "https://textures.lunarclientcdn.com/file/dafa8dc6ad811c89ec2f96d9481062f7d0880bc0", // modelo (.fbx o .obj)
-          [],   // transformaciones (array vacío si no hay)
+          [
+    { type: "translate", value: { player: { y: 0.25 } } } // 0.25 * 16 = 4 → cancela el -4 fijo
+  ],,   // transformaciones (array vacío si no hay)
           "https://textures.lunarclientcdn.com/file/82a11d62b9fe56171956c3ec8e40611fd48895b5"  // opcional: JSON de animación
         );
 
