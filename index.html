@@ -367,7 +367,7 @@
     <span class="badge">🪽 Demo live con wings</span>
     <h1>Lunar skinviewer standalone</h1>
     <p>
-      Esta demo carga <strong>solo</strong> <code style="display:inline;padding:2px 6px">skinview3d-lunar-standalone.js</code>.
+      Esta demo carga el bundle oficial <strong>skinviewer-v2_11_1_bundle.js</strong> (@lunarclient/skinviewer).
       Arranca con la animación de alas incorporada. Puedes subir tu propia skin o pegar su URL.
     </p>
 
@@ -429,19 +429,20 @@
     <p id="status">Inicializando viewer...</p>
 
     <label>Código mínimo</label>
-    <code>&lt;script src="skinview3d-lunar-standalone.js"&gt;&lt;/script&gt;
-const viewer = new skinviewer.LunarCosmeticsSkinViewer({ canvas });
+    <code>&lt;script src="skinviewer-v2_11_1_bundle.js"&gt;&lt;/script&gt;
+const viewer = new skinviewer.SkinViewer({ canvas });
 await viewer.loadSkin(skinCanvas);
-await viewer.loadCosmetics({
-  wings: { texture, model, meta }
-});</code>
+await viewer.loadJsonModel(textura, modeloJSON, animaciones, ...);
+await viewer.loadHat(textura, modeloFBX, transformaciones, animMeta);</code>
   </aside>
 
-  <script src="./skinview3d-lunar-standalone.js"></script>
+  <script src="./skinviewer-v2_11_1_bundle.js"></script>
   <script>
     const canvas  = document.getElementById("skin-canvas");
     const status  = document.getElementById("status");
-    const viewer  = new skinviewer.LunarCosmeticsSkinViewer({
+
+    // ⚠️ Este bundle exporta `skinviewer.SkinViewer`, no `LunarCosmeticsSkinViewer`
+    const viewer  = new skinviewer.SkinViewer({
       canvas,
       width: canvas.width,
       height: canvas.height,
@@ -450,9 +451,19 @@ await viewer.loadCosmetics({
       shadow: true,
     });
 
+    // El bundle oficial no trae `clearLunarCosmetics()`, pero loadJsonModel()/
+    // loadHat()/loadBodywear() llamados SIN argumentos ya resetean internamente
+    // (así está implementado el método real: "if(!e||!t) return ...reset()").
+    // Lo agregamos como método de conveniencia para no tocar el resto del código.
+    viewer.clearLunarCosmetics = async function () {
+      await this.loadJsonModel();
+      await this.loadHat();
+      await this.loadBodywear();
+    };
+
     skinviewer.createOrbitControls(viewer);
     viewer.zoom = 0.10;
-    viewer.fov = 30;    
+    viewer.fov = 30;
 
     /* ─────────────────────────────────────────
        SKIN DE DEMO (generada en canvas)
@@ -610,41 +621,40 @@ await viewer.loadCosmetics({
 
     document.getElementById("reset").addEventListener("click", startBuiltInWingDemo);
 
-  document.getElementById("load-lunar-wings").addEventListener("click", async () => {
-  try {
-    const molangRuntime = (await viewer.loadMolang([
-      "https://textures.lunarclientcdn.com/file/26a1adf369252c5e00577c05655f1d24569e0020"
-    ]))[0];
+    document.getElementById("load-lunar-wings").addEventListener("click", async () => {
+      try {
+        const molangRuntime = (await viewer.loadMolang([
+          "https://textures.lunarclientcdn.com/file/26a1adf369252c5e00577c05655f1d24569e0020"
+        ]))[0];
 
-    status.textContent = "Cargando Lunar wings...";
-    viewer.playerObject.skin.state.isFlying = false;
-    viewer.playerObject.elytra.visible = false;
+        status.textContent = "Cargando Lunar wings...";
+        viewer.playerObject.skin.state.isFlying = false;
+        viewer.playerObject.elytra.visible = false;
 
-    await viewer.loadJsonModel(
-      "https://textures.lunarclientcdn.com/file/d5d4ae348c020bb06853a28e63fc7586b91a971c", // textura
-      "https://textures.lunarclientcdn.com/file/72593b9f3e8101dc96a9824259a975da5787c3bd", // modelo
-      "https://textures.lunarclientcdn.com/file/b55a1460cb22cf3d60343691fbc39ac6dd9eea5f", // animaciones
-      undefined,                                                                            // meta/special
-      undefined,                                                                            // extra_data
-      undefined,                                                                            // special_cosmetic_meta
-      [molangRuntime],    
-      "https://textures.lunarclientcdn.com/file/5cc0e53d7ed60ddf5ae8dfb07d3aea6363dac9dc", // animation meta URL
-              
-    );
+        await viewer.loadJsonModel(
+          "https://textures.lunarclientcdn.com/file/d5d4ae348c020bb06853a28e63fc7586b91a971c", // textura
+          "https://textures.lunarclientcdn.com/file/72593b9f3e8101dc96a9824259a975da5787c3bd", // modelo (JSON geometry)
+          "https://textures.lunarclientcdn.com/file/b55a1460cb22cf3d60343691fbc39ac6dd9eea5f", // animaciones
+          undefined,                                                                            // meta/special
+          undefined,                                                                            // extra_data
+          undefined,                                                                            // special_cosmetic_meta
+          [molangRuntime],
+          "https://textures.lunarclientcdn.com/file/5cc0e53d7ed60ddf5ae8dfb07d3aea6363dac9dc", // animation meta URL
+        );
 
-    await viewer.loadHat(
-  "https://textures.lunarclientcdn.com/file/4445db83f6522ba662518061c0b8f0119e3160d9",   // textura (URL, dataURL o HTMLImageElement)
-  "https://textures.lunarclientcdn.com/file/dafa8dc6ad811c89ec2f96d9481062f7d0880bc0",     // modelo (.fbx o .obj)
-  [],                    // transformaciones (array vacío si no hay)
-  "https://textures.lunarclientcdn.com/file/82a11d62b9fe56171956c3ec8e40611fd48895b5"      // opcional: JSON de animación
-);
+        await viewer.loadHat(
+          "https://textures.lunarclientcdn.com/file/4445db83f6522ba662518061c0b8f0119e3160d9", // textura (URL, dataURL o HTMLImageElement)
+          "https://textures.lunarclientcdn.com/file/dafa8dc6ad811c89ec2f96d9481062f7d0880bc0", // modelo (.fbx o .obj)
+          [],   // transformaciones (array vacío si no hay)
+          "https://textures.lunarclientcdn.com/file/82a11d62b9fe56171956c3ec8e40611fd48895b5"  // opcional: JSON de animación
+        );
 
-    status.textContent = "Lunar wings cargadas.";
-  } catch (err) {
-    status.textContent = "❌ Error: " + err.message;
-    console.error(err);
-  }
-});
+        status.textContent = "Lunar wings cargadas.";
+      } catch (err) {
+        status.textContent = "❌ Error: " + err.message;
+        console.error(err);
+      }
+    });
 
     init().catch(error => {
       console.error(error);
@@ -652,4 +662,4 @@ await viewer.loadCosmetics({
     });
   </script>
 </body>
-  </html>
+</html>
